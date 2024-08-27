@@ -1,1 +1,1 @@
-# embedded-search
+# Embedded Search Server
