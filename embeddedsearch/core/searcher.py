@@ -1,10 +1,11 @@
 
 import xapian
 
-import config
 
-def search_documents(query_string, offset=0, pagesize=10):
-    database = xapian.Database(config.INDEX_PATH)
+import config as cfg
+
+def search_documents(query_string, offset=0, limit=20):
+    database = xapian.Database(cfg.INDEX_PATH)
     database.reopen()
     # Start an enquire session.
     enquire = xapian.Enquire(database)
@@ -24,7 +25,7 @@ def search_documents(query_string, offset=0, pagesize=10):
 
     # Find the top 10 results for the query.
     enquire.set_query(query)
-    matches = enquire.get_mset(offset, pagesize)
+    matches = enquire.get_mset(offset, limit)
 
     # Display the results.
     print ("%i results found." % matches.get_matches_estimated())
@@ -33,9 +34,9 @@ def search_documents(query_string, offset=0, pagesize=10):
     result={}
     
     result["data"]=[m.document.get_data() for m in matches]
-    result["estimated"]=matches.get_matches_estimated()
+    result["total"]=matches.get_matches_estimated()
     result["offset"]=offset
-    result["pagesize"]=pagesize
+    result["limit"]=limit
 
     return result
     # for m in matches:

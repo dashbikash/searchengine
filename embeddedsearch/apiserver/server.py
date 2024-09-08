@@ -14,7 +14,7 @@ async def index_one(document: dict):
 
 @app.get("/search")
 async def search(query: str,page: int = 1):
-    return search_documents(query,offset=(page-1)*10,pagesize=10)
+    return search_documents(query,offset=(page-1)*20,limit=20)
     
 def serve():
     uvicorn.run(app, host="0.0.0.0", port=8000)

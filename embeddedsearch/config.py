@@ -1,1 +1,1 @@
-INDEX_PATH='/tmp/xapian_index'
+INDEX_PATH='/tmp/indexes'
