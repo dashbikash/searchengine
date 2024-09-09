@@ -5,7 +5,8 @@ import sys
 import xxhash
 from core.indexer import index_document
 from core.searcher import search_documents
-import langdetect
+
+from core import pbutil
 
 
 document_data = [
@@ -21,8 +22,8 @@ document_data = [
 def index_news():
     with open('tests/news.csv', mode ='r') as file:    
        csvFile = csv.DictReader(file)
-       for lines in csvFile:
-            print("[OK] "+lines["links"])
+       for idx,lines in enumerate(csvFile):
+            print("%d: [OK] %s"%(idx,lines["links"]))
             index_document(xxhash.xxh64_hexdigest(lines["links"]),lines)
 
 if len(sys.argv) > 1:
@@ -32,10 +33,9 @@ if len(sys.argv) > 1:
     if sys.argv[1] == 's':    
         query_string = sys.argv[2]
         result = search_documents(query_string)
-        for doc in result["data"]:
-            item=json.loads(doc.decode("utf-8"))
-            print(item)
-            print(langdetect.detect(item["short_description"]))
+        if "data" in result.keys() :
+            for doc in result["data"]:
+                print(pbutil.doc_pb_deserialize(doc))
 else:
     print("No command line argument provided.")
 

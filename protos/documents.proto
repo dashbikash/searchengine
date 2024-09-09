@@ -1,0 +1,9 @@
+syntax = "proto3";
+package pb2;
+message Document {
+    string category = 1;
+    string headline = 2;
+    string links = 3;
+    string short_description = 4;
+    string keywords = 5;
+}

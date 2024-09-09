@@ -3,8 +3,13 @@ import uvicorn
 
 from core.indexer import index_document
 from core.searcher import search_documents
+from core.pbutil import doc_pb_deserialize
 
 app = FastAPI()
+
+@app.get("/")
+async def root():
+    return "Welcome to Embedded Search Engine!"
 
 @app.post("/index_one")
 async def index_one(document: dict):
@@ -13,8 +18,15 @@ async def index_one(document: dict):
 
 
 @app.get("/search")
-async def search(query: str,page: int = 1):
-    return search_documents(query,offset=(page-1)*20,limit=20)
+async def search(q: str,page: int = 1):
+    result=search_documents(q,offset=(page-1)*20,limit=20)
+    resp={}
+    if "data" in result.keys() :
+        
+        resp["records"]=[doc_pb_deserialize(r) for r in result["data"]]
+        resp["total"]=result["total"]
+        return resp
+    return resp
     
 def serve():
     uvicorn.run(app, host="0.0.0.0", port=8000)
