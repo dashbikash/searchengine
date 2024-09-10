@@ -4,6 +4,7 @@ import uvicorn
 from core.indexer import index_document
 from core.searcher import search_documents
 from core.pbutil import doc_pb_deserialize
+import xxhash
 
 app = FastAPI()
 
@@ -13,7 +14,7 @@ async def root():
 
 @app.post("/index_one")
 async def index_one(document: dict):
-    index_document(document)
+    index_document(xxhash.xxh64_hexdigest(document["links"]),document)
     return {"message": "Document added successfully"}
 
 
