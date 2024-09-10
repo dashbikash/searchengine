@@ -1,9 +1,12 @@
 syntax = "proto3";
-package pb2;
-message Document {
-    string category = 1;
+
+import "google/protobuf/timestamp.proto";
+
+message Article {
+    string link = 1;
     string headline = 2;
-    string links = 3;
+    string category = 3;
     string short_description = 4;
-    string keywords = 5;
+    string authors = 5;
+    google.protobuf.Timestamp date = 6;
 }

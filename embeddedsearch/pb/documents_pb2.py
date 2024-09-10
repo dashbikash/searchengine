@@ -11,15 +11,16 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0f\x64ocuments.proto\x12\x03pb2\"j\n\x08\x44ocument\x12\x10\n\x08\x63\x61tegory\x18\x01 \x01(\t\x12\x10\n\x08headline\x18\x02 \x01(\t\x12\r\n\x05links\x18\x03 \x01(\t\x12\x19\n\x11short_description\x18\x04 \x01(\t\x12\x10\n\x08keywords\x18\x05 \x01(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0f\x64ocuments.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x91\x01\n\x07\x41rticle\x12\x0c\n\x04link\x18\x01 \x01(\t\x12\x10\n\x08headline\x18\x02 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x03 \x01(\t\x12\x19\n\x11short_description\x18\x04 \x01(\t\x12\x0f\n\x07\x61uthors\x18\x05 \x01(\t\x12(\n\x04\x64\x61te\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.Timestampb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'documents_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _DOCUMENT._serialized_start=24
-  _DOCUMENT._serialized_end=130
+  _ARTICLE._serialized_start=53
+  _ARTICLE._serialized_end=198
 # @@protoc_insertion_point(module_scope)

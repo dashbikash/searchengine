@@ -1,24 +1,30 @@
-# {'category': 'WELLNESS', 'headline': 'Bye-Bye Retirement, Hello Life!', 'links': 'https://www.huffingtonpost.com/entry/byebye-retirementhello-li_us_5b9dccd0e4b03a1dcc8d0cec', 'short_description': 'What if there is no retirement? What if we don\'t wait until 65 to enjoy life and connect with our passions? What if the so called "Act 2" when retirees find their dream jobs doing what they love to do actually happens now when we are in our 20s, 30s and 40s?', 'keywords': 'byebye-retirementhello-li'}
+# link,headline,category,short_description,authors,date
+# https://www.huffpost.com/entry/covid-boosters-uptake-us_n_632d719ee4b087fae6feaac9,Over 4 Million Americans Roll Up Sleeves For Omicron-Targeted COVID Boosters,U.S. NEWS,Health experts said it is too early to predict whether demand would match up with the 171 million doses of the new boosters the U.S. ordered for the fall.,"Carla K. Johnson, AP",2022-09-23
+
+from datetime import datetime
 import pb.documents_pb2 as pb
 
-def doc_pb_serialize(document):
-    pb_doc = pb.Document()
-    pb_doc.category = document['category']
-    pb_doc.headline = document['headline']
-    pb_doc.links=document['links']
-    pb_doc.short_description = document['short_description']
-    pb_doc.keywords=document['keywords']
-    return pb_doc.SerializeToString()
+def article_pb_marshal(article):
+    pb_article = pb.Article()
+    pb_article.link=article['link']
+    pb_article.category = article['category']
+    pb_article.headline = article['headline']
+    pb_article.short_description = article['short_description']
+    pb_article.authors=article['authors']
+    pb_article.date = datetime.strptime(article['date'], '%Y-%m-%d')
+    return pb_article.SerializeToString()
+    
 
-def doc_pb_deserialize(document_serialized):
-    pb_doc = pb.Document()
-    pb_doc.ParseFromString(document_serialized)
-    document = {
-        'category': pb_doc.category,
-        'headline': pb_doc.headline,
-        'links': pb_doc.links,
-        'short_description': pb_doc.short_description,
-        'keywords': pb_doc.keywords
+def article_pb_unmarshal(article_serialized):
+    pb_article = pb.Article()
+    pb_article.ParseFromString(article_serialized)
+    article = {
+        "link": pb_article.link,
+        "category": pb_article.category,
+        "headline": pb_article.headline,
+        "short_description": pb_article.short_description,
+        "authors": pb_article.authors,
+        "date": pb_article.date.ToDatetime().strftime('%Y-%m-%d')
     }
-    return document
+    return article
 

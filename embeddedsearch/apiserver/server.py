@@ -3,7 +3,7 @@ import uvicorn
 
 from core.indexer import index_document
 from core.searcher import search_documents
-from core.pbutil import doc_pb_deserialize
+from core.pbutil import article_pb_unmarshal
 import xxhash
 
 app = FastAPI()
@@ -24,7 +24,7 @@ async def search(q: str,page: int = 1):
     resp={}
     if "data" in result.keys() :
         
-        resp["records"]=[doc_pb_deserialize(r) for r in result["data"]]
+        resp["records"]=[article_pb_unmarshal(r) for r in result["data"]]
         resp["total"]=result["total"]
         return resp
     return resp
