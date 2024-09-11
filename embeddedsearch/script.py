@@ -23,7 +23,7 @@ def index_news():
         for line in csvFile:
             if index_document(xxhash.xxh64_hexdigest(line["link"]),line):
                 print("[\u2713] %s"%(line["link"]))
-                count++
+                count+=1
             else:
                 print("[x] %s"%(line["link"]))
         print("Total documents indexed: %d" % count)
