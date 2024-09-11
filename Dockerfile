@@ -2,14 +2,14 @@ FROM ubuntu:22.04
 
 WORKDIR /app
 
-RUN apt update 
-RUN apt install -y python3 python3-pip python3-xapian libxapian-dev
-RUN apt autoclean
-
-
-COPY embeddedsearch/ ./embeddedsearch
+COPY embeddedsearch/ ./embeddedsearch 
 COPY requirements.txt ./
-RUN python3 -m pip install -r requirements.txt  --no-cache-dir 
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install python3 python3-pip python3-xapian libxapian-dev -y && \
+    apt clean -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install -r requirements.txt  --no-cache-dir
 
 EXPOSE 8000
 CMD [ "python3","embeddedsearch/main.py" ]

@@ -1,4 +1,5 @@
 import json
+import zlib
 import xapian
 
 import config as cfg
@@ -20,8 +21,11 @@ def index_document(unique_id,document)->bool:
     xapian_doc = xapian.Document()
     xapian_doc.set_data(article_pb_marshal(document))
     indexer.set_document(xapian_doc)
-    index_text=[document[key] for key in document.keys() if key != "date"]
-    indexer.index_text("\n".join(index_text))
+    
+    indexer.index_text(document["headline"],1,"H")
+    indexer.index_text(document["category"],1,"C")
+    indexer.index_text(document["short_description"],1,"S")
+    indexer.index_text(document["authors"],1,"A")
     xapian_doc.add_term(unique_id)  # Add the unique identifier as a term
     # Add the document to the database.
     db.add_document(xapian_doc)

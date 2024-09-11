@@ -19,15 +19,19 @@ def index_news():
     with open('/tmp/news.csv', mode ='r') as file:
         csvFile = csv.DictReader(file)
         count=0
+        limit=int(sys.argv[2]) if len(sys.argv)==3 else  0
         start_time = time.time()
         for line in csvFile:
-            if index_document(xxhash.xxh64_hexdigest(line["link"]),line):
+            
+            if (limit==0 or count<limit) and index_document(xxhash.xxh64_hexdigest(line["link"]),line):
                 print("[\u2713] %s"%(line["link"]))
                 count+=1
+            elif limit>0 and count>=limit:
+                break
             else:
                 print("[x] %s"%(line["link"]))
         print("Total documents indexed: %d" % count)
-        print("Total time taken: %d" % (start_time-time.time()))
+        print("Total time taken: %d" % (time.time()-start_time))
 
 
 

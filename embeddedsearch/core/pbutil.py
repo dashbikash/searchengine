@@ -6,11 +6,11 @@ import pb.documents_pb2 as pb
 
 def article_pb_marshal(article):
     pb_article = pb.Article()
-    pb_article.link=article['link']
-    pb_article.category = article['category']
-    pb_article.headline = article['headline']
-    pb_article.short_description = article['short_description']
-    pb_article.authors=article['authors']
+    if 'link' in article.keys() : pb_article.link=article['link']
+    if 'category' in article.keys() : pb_article.category = article['category']
+    if 'headline' in article.keys() : pb_article.headline = article['headline']
+    if 'short_description' in article.keys() : pb_article.short_description = article['short_description']
+    if 'authors' in article.keys() : pb_article.authors=article['authors']
     pb_article.date = datetime.strptime(article['date'], '%Y-%m-%d')
     return pb_article.SerializeToString()
     
