@@ -10,16 +10,26 @@ from core.searcher import search_documents
 from core import pbutil
 import urllib.request
 import os
+import time
 
 def index_news():
     if not os.path.exists('/tmp/news.csv'):
         urllib.request.urlretrieve("https://gitlab.com/mrdash/datasets/-/raw/main/news_category.csv?ref_type=heads&inline=false", "/tmp/news.csv")
-    
-    with open('/tmp/news.csv', mode ='r') as file:    
+
+    with open('/tmp/news.csv', mode ='r') as file:
         csvFile = csv.DictReader(file)
+        count=0
+        start_time = time.time()
         for line in csvFile:
-            print("[OK] %s"%(line["link"]))
-            index_document(xxhash.xxh64_hexdigest(line["link"]),line)
+            if index_document(xxhash.xxh64_hexdigest(line["link"]),line):
+                print("[\u2713] %s"%(line["link"]))
+                count++
+            else:
+                print("[x] %s"%(line["link"]))
+        print("Total documents indexed: %d" % count)
+        print("Total time taken: %d" % (start_time-time.time()))
+
+
 
 def search_news():
     query_string = sys.argv[2]

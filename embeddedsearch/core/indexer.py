@@ -12,7 +12,6 @@ def index_document(unique_id,document)->bool:
     enquire.set_query(query)
     matches = enquire.get_mset(0, 1)
     if matches.size() > 0:
-        print(f"Document with ID {unique_id} already exists. Skipping indexing.")
         return False
     
     indexer = xapian.TermGenerator()
