@@ -3,37 +3,45 @@ import xapian
 
 
 import config as cfg
+from .pbutil import article_pb_unmarshal
 
-def search_documents(query_string, offset=0, limit=20):
+def search_documents(query_string, offset=0, limit=10):
     result={}
     try:
         database = xapian.Database(cfg.INDEX_PATH)
         database.reopen()
-        # Start an enquire session.
-        enquire = xapian.Enquire(database)
-
-        # Combine the rest of the command line arguments with spaces between
-        # them, so that simple queries don't have to be quoted at the shell
-        # level.
 
         # Parse the query string to produce a Xapian::Query object.
-        qp = xapian.QueryParser()
-        stemmer = xapian.Stem("english")
-        qp.set_stemmer(stemmer)
-        qp.set_database(database)
-        qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME_FULL_POS)
-        query = qp.parse_query(query_string)
-        print ("Parsed query is: %s" % str(query))
+        query_parser = xapian.QueryParser()
+        query_parser.set_database(database)
 
-        # Find the top 10 results for the query.
+        query_parser.set_stemmer(xapian.Stem("english"))
+        query_parser.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
+
+        query_parser.add_prefix("category", "C")
+
+        # Set the query parser flags to enable OR operator
+        query_parser.set_default_op(xapian.Query.OP_OR)
+        
+        flags= xapian.QueryParser.FLAG_DEFAULT | xapian.QueryParser.FLAG_SPELLING_CORRECTION
+        query = query_parser.parse_query(query_string, flags)
+        
+        print("Parsed query: %s" % str(query))
+
+        print("Corrected query: %s" % str(query_parser.get_corrected_query_string()))
+        
+        # Start an enquire session.
+        enquire = xapian.Enquire(database)
         enquire.set_query(query)
         matches = enquire.get_mset(offset, limit)
+
+        
 
         # Display the results.
         print ("%i results found." % matches.get_matches_estimated())
         print ("Results 1-%i:" % matches.size())
         if matches.size()>0:
-            result["data"]=[m.document.get_data() for m in matches]
+            result["data"]=[ article_pb_unmarshal(m.document.get_data()) for m in matches]
             result["total"]=matches.get_matches_estimated()
             result["offset"]=offset
             result["limit"]=limit

@@ -22,14 +22,13 @@ def index_news():
         limit=int(sys.argv[2]) if len(sys.argv)==3 else  0
         start_time = time.time()
         for line in csvFile:
-            
             if (limit==0 or count<limit) and index_document(xxhash.xxh64_hexdigest(line["link"]),line):
-                print("[\u2713] %s"%(line["link"]))
+                print("[\033[92m\u2713\033[00m] %s"%(line["link"]))
                 count+=1
             elif limit>0 and count>=limit:
                 break
             else:
-                print("[x] %s"%(line["link"]))
+                print("[\033[91mx\033[00m] %s"%(line["link"]))
         print("Total documents indexed: %d" % count)
         print("Total time taken: %d" % (time.time()-start_time))
 
@@ -40,7 +39,8 @@ def search_news():
     result = search_documents(query_string)
     if "data" in result.keys() :
         for doc in result["data"]:
-            print(pbutil.article_pb_unmarshal(doc))
+            print(doc)
+
 
 if len(sys.argv) > 1:
     if sys.argv[1] == 'i':

@@ -22,10 +22,9 @@ def index_document(unique_id,document)->bool:
     xapian_doc.set_data(article_pb_marshal(document))
     indexer.set_document(xapian_doc)
     
-    indexer.index_text(document["headline"],1,"H")
     indexer.index_text(document["category"],1,"C")
-    indexer.index_text(document["short_description"],1,"S")
-    indexer.index_text(document["authors"],1,"A")
+    indexer.index_text("\n".join([document["headline"],document["short_description"],document["authors"]]),2,"Z")
+
     xapian_doc.add_term(unique_id)  # Add the unique identifier as a term
     # Add the document to the database.
     db.add_document(xapian_doc)
