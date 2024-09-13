@@ -1,9 +1,10 @@
-import json
-import zlib
 import xapian
+import xxhash
 
 import config as cfg
+from core import BaseIndexer
 from .pbutil import article_pb_marshal
+import pyonmttok
 
 def index_document(unique_id,document)->bool:
     db = xapian.WritableDatabase(cfg.INDEX_PATH, xapian.DB_CREATE_OR_OPEN)
@@ -23,9 +24,13 @@ def index_document(unique_id,document)->bool:
     indexer.set_document(xapian_doc)
     
     indexer.index_text(document["category"],1,"C")
-    indexer.index_text("\n".join([document["headline"],document["short_description"],document["authors"]]),2,"Z")
+
+    content_text="\n".join([document["headline"],document["short_description"],document["authors"]])
+    indexer.index_text(content_text,2,"Z")
+
 
     xapian_doc.add_term(unique_id)  # Add the unique identifier as a term
     # Add the document to the database.
     db.add_document(xapian_doc)
     return True
+

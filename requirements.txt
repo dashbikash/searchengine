@@ -2,3 +2,5 @@ fastapi[standard]
 xxhash
 #langdetect
 protobuf
+tiktoken
+pyonmttok

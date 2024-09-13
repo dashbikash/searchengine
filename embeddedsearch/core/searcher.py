@@ -47,3 +47,4 @@ def search_documents(query_string, offset=0, limit=10):
             result["limit"]=limit
     finally:
         return result
+    
