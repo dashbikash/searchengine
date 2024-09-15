@@ -1,6 +1,7 @@
+import json
 import xapian
 import xxhash
-from core import BaseIndexer,BaseSearcher
+from core.base import BaseIndexer,BaseSearcher
 import pyonmttok
 from datetime import datetime
 import common
@@ -9,14 +10,14 @@ import pb.documents_pb2 as pb
 LOG=common.getLogger(__name__)
 
 class NewsIndexer(BaseIndexer):
+    
     def __init__(self):
         super().__init__()
         self._tokenizer=pyonmttok.Tokenizer("conservative", joiner_annotate=True)
 
     def index(self, document)->bool:
         unique_id = xxhash.xxh3_64_hexdigest(document["link"])
-        
-        
+
         if self._document_exists(unique_id):
             return False
 
@@ -40,6 +41,8 @@ class NewsIndexer(BaseIndexer):
         self.database.add_document(xapian_doc)
         return True
     
+    
+
     def _document_exists(self, unique_id):
         enquire = xapian.Enquire(self.database)
         query = xapian.Query(unique_id)
@@ -101,14 +104,16 @@ class NewsSearcher(BaseSearcher):
 
 
 def news_pb_marshal(news):
-    pb_news = pb.DummyNews()
-    if 'link' in news.keys() : pb_news.link=news['link']
-    if 'category' in news.keys() : pb_news.category = news['category']
-    if 'headline' in news.keys() : pb_news.headline = news['headline']
-    if 'short_description' in news.keys() : pb_news.short_description = news['short_description']
-    if 'authors' in news.keys() : pb_news.authors=news['authors']
-    pb_news.date = datetime.strptime(news['date'], '%Y-%m-%d')
+    pb_news = pb.DummyNews(link=news['link'],category=news['category'],headline=news['headline'],short_description=news['short_description'],authors=news['authors'],date=datetime.strptime(news['date'], '%Y-%m-%d'))
+    # if 'link' in news.keys() : pb_news.link=news['link']
+    # if 'category' in news.keys() : pb_news.category = news['category']
+    # if 'headline' in news.keys() : pb_news.headline = news['headline']
+    # if 'short_description' in news.keys() : pb_news.short_description = news['short_description']
+    # if 'authors' in news.keys() : pb_news.authors=news['authors']
+    # pb_news.date = datetime.strptime(news['date'], '%Y-%m-%d')
+    
     return pb_news.SerializeToString()
+    # return json.dumps(news).encode('utf-8')
     
 
 def news_pb_unmarshal(news_serialized):
