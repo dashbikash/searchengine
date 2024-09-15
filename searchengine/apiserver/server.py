@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 import uvicorn
 
-from core.article_engine import ArticleIndexer,ArticleSearcher
+from core.news_engine import ArticleIndexer,ArticleSearcher
+import logging
+
 
 app = FastAPI()
 
@@ -13,7 +15,7 @@ async def root():
 async def index_one(document: dict):
     indexer=ArticleIndexer()
     indexer.index(document)
-    indexer.dispose()
+    indexer.done()
     return {"message": "Document added successfully"}
 
 
@@ -21,8 +23,7 @@ async def index_one(document: dict):
 async def search(q: str,page: int = 1):
     searcher =ArticleSearcher()
     result=searcher.search(q,offset=(page-1)*20,limit=20)
-    searcher.dispose()
-    
+    searcher.done()
     return result
     
 def serve():

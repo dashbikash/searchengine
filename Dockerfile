@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 WORKDIR /app
 
-COPY embeddedsearch/ ./embeddedsearch 
+COPY searchengine/ ./searchengine 
 COPY requirements.txt ./
 RUN apt update -y && \
     apt upgrade -y && \
@@ -12,4 +12,4 @@ RUN apt update -y && \
     pip install -r requirements.txt  --no-cache-dir
 
 EXPOSE 8000
-CMD [ "python3","embeddedsearch/main.py" ]
+CMD [ "python3","searchengine/main.py" ]

@@ -1,12 +1,14 @@
 import xapian
 import xxhash
 from core import BaseIndexer,BaseSearcher
-from .pbutil import article_pb_marshal,article_pb_unmarshal
 import pyonmttok
 from datetime import datetime
+import common
 import pb.documents_pb2 as pb
 
-class ArticleIndexer(BaseIndexer):
+LOG=common.getLogger(__name__)
+
+class NewsIndexer(BaseIndexer):
     def __init__(self):
         super().__init__()
         self._tokenizer=pyonmttok.Tokenizer("conservative", joiner_annotate=True)
@@ -22,7 +24,7 @@ class ArticleIndexer(BaseIndexer):
         stemmer = xapian.Stem("english")
         indexer.set_stemmer(stemmer)
         xapian_doc = xapian.Document()
-        xapian_doc.set_data(article_pb_marshal(document))
+        xapian_doc.set_data(news_pb_marshal(document))
         indexer.set_document(xapian_doc)
         
         indexer.index_text(document["category"],1,"C")
@@ -50,7 +52,7 @@ class ArticleIndexer(BaseIndexer):
         return self._tokenizer.tokenize(text)[0]
 
 
-class ArticleSearcher(BaseSearcher):
+class NewsSearcher(BaseSearcher):
     def __init__(self):
         super().__init__()
         pass
@@ -75,9 +77,9 @@ class ArticleSearcher(BaseSearcher):
             flags= xapian.QueryParser.FLAG_DEFAULT | xapian.QueryParser.FLAG_SPELLING_CORRECTION
             query_parsed = query_parser.parse_query(query, flags)
             
-            print("Parsed query: %s" % str(query_parsed))
-
-            print("Corrected query: %s" % str(query_parser.get_corrected_query_string()))
+            LOG.info("Parsed query: %s" % str(query_parsed))
+ 
+            LOG.info("Corrected query: %s" % str(query_parser.get_corrected_query_string()))
             
             # Start an enquire session.
             enquire = xapian.Enquire(self.database)
@@ -85,10 +87,11 @@ class ArticleSearcher(BaseSearcher):
             matches = enquire.get_mset(offset, limit)
 
             # Display the results.
-            print ("%i results found." % matches.get_matches_estimated())
-            print ("Results 1-%i:" % matches.size())
+            
+            # LOG.disabled("%i results found." % matches.get_matches_estimated())
+            # LOG.disabled("Results 1-%i:" % matches.size())
             if matches.size()>0:
-                result["data"]=[ article_pb_unmarshal(m.document.get_data()) for m in matches]
+                result["data"]=[ news_pb_unmarshal(m.document.get_data()) for m in matches]
                 result["estimated"]=matches.get_matches_estimated()
                 result["offset"]=offset
                 result["limit"]=limit
@@ -97,26 +100,26 @@ class ArticleSearcher(BaseSearcher):
 
 
 
-def article_pb_marshal(article):
-    pb_article = pb.Article()
-    if 'link' in article.keys() : pb_article.link=article['link']
-    if 'category' in article.keys() : pb_article.category = article['category']
-    if 'headline' in article.keys() : pb_article.headline = article['headline']
-    if 'short_description' in article.keys() : pb_article.short_description = article['short_description']
-    if 'authors' in article.keys() : pb_article.authors=article['authors']
-    pb_article.date = datetime.strptime(article['date'], '%Y-%m-%d')
-    return pb_article.SerializeToString()
+def news_pb_marshal(news):
+    pb_news = pb.DummyNews()
+    if 'link' in news.keys() : pb_news.link=news['link']
+    if 'category' in news.keys() : pb_news.category = news['category']
+    if 'headline' in news.keys() : pb_news.headline = news['headline']
+    if 'short_description' in news.keys() : pb_news.short_description = news['short_description']
+    if 'authors' in news.keys() : pb_news.authors=news['authors']
+    pb_news.date = datetime.strptime(news['date'], '%Y-%m-%d')
+    return pb_news.SerializeToString()
     
 
-def article_pb_unmarshal(article_serialized):
-    pb_article = pb.Article()
-    pb_article.ParseFromString(article_serialized)
-    article = {
-        "link": pb_article.link,
-        "category": pb_article.category,
-        "headline": pb_article.headline,
-        "short_description": pb_article.short_description,
-        "authors": pb_article.authors,
-        "date": pb_article.date.ToDatetime().strftime('%Y-%m-%d')
+def news_pb_unmarshal(news_serialized):
+    pb_news = pb.DummyNews()
+    pb_news.ParseFromString(news_serialized)
+    news = {
+        "link": pb_news.link,
+        "category": pb_news.category,
+        "headline": pb_news.headline,
+        "short_description": pb_news.short_description,
+        "authors": pb_news.authors,
+        "date": pb_news.date.ToDatetime().strftime('%Y-%m-%d')
     }
-    return article
+    return news

@@ -1,4 +1,5 @@
-# Embedded Search Server
+# Search Engine
+
 
 To get build info run
 ~~~ 

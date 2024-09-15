@@ -13,4 +13,4 @@ RUN git config --global user.name "Bikash" && \
     git config --global user.email "bikashprakashdash@gmail.com"
 
 EXPOSE 8000
-CMD [ "python3","embeddedsearch/main.py" ]
+CMD [ "python3","searchengine/main.py" ]

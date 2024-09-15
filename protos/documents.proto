@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-message Article {
+message DummyNews {
     string link = 1;
     string headline = 2;
     string category = 3;
