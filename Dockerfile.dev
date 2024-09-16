@@ -12,5 +12,5 @@ RUN apt update -y && \
 RUN git config --global user.name "Bikash" && \
     git config --global user.email "bikashprakashdash@gmail.com"
 
-EXPOSE 8000
+EXPOSE 8619
 CMD [ "python3","searchengine/main.py" ]

@@ -81,18 +81,18 @@ class NewsSearcher(BaseSearcher):
             query_parsed = query_parser.parse_query(query, flags)
             
             LOG.info("Parsed query: %s" % str(query_parsed))
- 
             LOG.info("Corrected query: %s" % str(query_parser.get_corrected_query_string()))
             
             # Start an enquire session.
             enquire = xapian.Enquire(self.database)
+            # enquire.set_weighting_scheme(xapian.BM25Weight)
             enquire.set_query(query_parsed)
             matches = enquire.get_mset(offset, limit)
 
             # Display the results.
-            
-            # LOG.disabled("%i results found." % matches.get_matches_estimated())
-            # LOG.disabled("Results 1-%i:" % matches.size())
+            LOG.info("Estimated records %i " % matches.get_matches_estimated())
+            LOG.info("Results 1-%i:" % matches.size())
+
             if matches.size()>0:
                 result["data"]=[ news_pb_unmarshal(m.document.get_data()) for m in matches]
                 result["estimated"]=matches.get_matches_estimated()

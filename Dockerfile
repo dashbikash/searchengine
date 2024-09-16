@@ -11,5 +11,5 @@ RUN apt update -y && \
     rm -rf /var/lib/apt/lists/* && \
     pip install -r requirements.txt  --no-cache-dir
 
-EXPOSE 8000
+EXPOSE 8619
 CMD [ "python3","searchengine/main.py" ]

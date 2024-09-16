@@ -15,39 +15,41 @@ RESET_COLOR = '\033[0m'
 def index_news():
     
     if not os.path.exists('/tmp/news.csv'):
-        print("Downloading news dataset...")
+        print("Downloading news...")
         urllib.request.urlretrieve("https://gitlab.com/mrdash/datasets/-/raw/main/news_category.csv?ref_type=heads&inline=false", "/tmp/news.csv")
 
-    print("Indexing news dataset...")
+    print("Indexing news...")
     indexer=NewsIndexer()
     with open('/tmp/news.csv', mode ='r') as file:
         csvFile = csv.DictReader(file)
         count=0
         limit=int(sys.argv[2]) if len(sys.argv)==3 else  0
         start_time = time.time()
-        batch_count=0
-        batch_size=2000
-        
-        for line in csvFile:
+        batch_reset=True
+        batch_size=2500
+        for i,line in enumerate(csvFile):
+            if batch_reset:
+                indexer.new_batch()
+                batch_reset=False
             if (limit==0 or count<limit) and indexer.index(line):
-                if batch_count==0: indexer.new_batch()
-                print("["+TEXT_GREEN+"\u2713"+RESET_COLOR+"] %s"%(line["link"]))
                 count+=1
-                batch_count+=1
+                print("["+TEXT_GREEN+"\u2713"+RESET_COLOR+"] %s"%(line["link"]))
+                
             elif limit>0 and count>=limit:
                 break
             else:
                 print("["+TEXT_RED+"x"+RESET_COLOR+"] %s"%(line["link"]))
             
-            if batch_count>=batch_size:
-                batch_count=0
+            if i%batch_size==0:
                 indexer.save_batch()
-                
+                batch_reset=True
+            
+        if not batch_reset:
+            indexer.save_batch()
 
         indexer.finish()
         print("Documents indexed: %d" % count)
         print("Time taken: %d" % (time.time()-start_time))
-
 
 
 def search_news():
@@ -57,7 +59,6 @@ def search_news():
     result = searcher.search(query_string, (page-1)*10, 10)
     searcher.finish()
     if "data" in result.keys() :
-        print("Estimated: %s" % result["estimated"])
         for i,doc in enumerate( result["data"]):
             print("[%d] %s" % (i+1,doc))
 

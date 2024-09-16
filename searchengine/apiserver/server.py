@@ -9,6 +9,30 @@ app = FastAPI()
 
 api_router=APIRouter(prefix= "/api")
 
+
+@api_router.post("/index")
+async def index_one(documents: list):
+    if  len(documents)>1000: 
+        return {"message": "Document count exceeds limit"}
+    try:
+        indexer=NewsIndexer()
+        indexer.new_batch()
+        for doc in documents: indexer.index(doc)
+        indexer.save_batch()
+    except Exception as e:
+        indexer.cancel_batch()
+    finally:
+        indexer.finish()
+        return {"message": "Document added successfully"}
+
+
+@api_router.get("/search")
+async def search(q: str,page: int = 1):
+    searcher =NewsSearcher()
+    result=searcher.search(q,offset=(page-1)*20,limit=20)
+    searcher.finish()
+    return result
+
 @app.get("/")
 async def root():
     return "This is a Search Engine Project!"
@@ -16,4 +40,4 @@ async def root():
 app.include_router(api_router)
     
 def serve():
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, port=8619)

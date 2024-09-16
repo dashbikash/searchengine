@@ -1,0 +1,7 @@
+POST http://localhost:8619/api/index
+Content-Type: application/json
+
+[
+    {"link": "https://www.huffpost.com/entry/india-kashmir-thousands-detained_n_5d5cfd7de4b063487e94a215", "category": "WORLD NEWS", "headline": "India Detains Thousands In Locked-Down Kashmir", "short_description": "Those arrested include anti-India protesters as well as pro-India Kashmiri leaders who have been held in jails and other makeshift facilities.", "authors": "Aijaz Hussain, AP", "date": "2019-08-21"},
+    {"link": "https://www.huffpost.com/entry/fire-kills-patients-southern-india-covid-19-facility_n_5f2feb77c5b6e96a22b3dc49", "category": "WORLD NEWS", "headline": "Fire Kills 11 Patients In Southern India COVID-19 Facility", "short_description": "This the second fire incident at a COVID-19 facility in India this month.", "authors": "Omer Farooq, AP", "date": "2020-08-09"}
+]
