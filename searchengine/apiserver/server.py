@@ -2,8 +2,6 @@ from fastapi import FastAPI,APIRouter
 import uvicorn
 
 from core.news_engine import NewsIndexer,NewsSearcher
-import logging
-
 
 app = FastAPI()
 
@@ -11,13 +9,13 @@ api_router=APIRouter(prefix= "/api")
 
 
 @api_router.post("/index")
-async def index_one(documents: list):
-    if  len(documents)>1000: 
+async def index_one(data: dict):
+    if  len(data["documents"])>1000: 
         return {"message": "Document count exceeds limit"}
     try:
         indexer=NewsIndexer()
         indexer.new_batch()
-        for doc in documents: indexer.index(doc)
+        for doc in data["documents"]: indexer.index(doc)
         indexer.save_batch()
     except Exception as e:
         indexer.cancel_batch()
