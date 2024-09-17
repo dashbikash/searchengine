@@ -1,4 +1,5 @@
 import csv
+import json
 import sys
 import time
 
@@ -10,7 +11,18 @@ from core.news_engine import NewsIndexer,NewsSearcher
 
 TEXT_RED = '\033[91m'
 TEXT_GREEN = '\033[92m'
-RESET_COLOR = '\033[0m'
+RESET = '\033[0m'
+
+
+def index_newsV2():
+    with open('tests/news.json','r') as file: data = json.load(file)
+    indexer=NewsIndexer()
+    indexer.new_batch()
+    for doc in data: 
+        if indexer.index(doc):print("["+TEXT_GREEN+"\u2713"+RESET+"] %s"%(doc["link"]))
+        else: print("["+TEXT_RED+"x"+RESET+"] %s"%(doc["link"]))
+    indexer.save_batch()
+
 
 def index_news():
     
@@ -33,12 +45,12 @@ def index_news():
                 batch_reset=False
             if (limit==0 or count<limit) and indexer.index(line):
                 count+=1
-                print("["+TEXT_GREEN+"\u2713"+RESET_COLOR+"] %s"%(line["link"]))
+                print("["+TEXT_GREEN+"\u2713"+RESET+"] %s"%(line["link"]))
                 
             elif limit>0 and count>=limit:
                 break
             else:
-                print("["+TEXT_RED+"x"+RESET_COLOR+"] %s"%(line["link"]))
+                print("["+TEXT_RED+"x"+RESET+"] %s"%(line["link"]))
             
             if i%batch_size==0:
                 indexer.save_batch()
@@ -65,7 +77,7 @@ def search_news():
 
 if len(sys.argv) > 1:
     if sys.argv[1] == 'i':
-        index_news()
+        index_newsV2()
     if sys.argv[1] == 's':
         search_news() 
         

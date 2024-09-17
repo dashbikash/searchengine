@@ -1,7 +1,17 @@
 POST http://localhost:8619/api/index
 Content-Type: application/json
 
-[
-    {"link": "https://www.huffpost.com/entry/india-kashmir-thousands-detained_n_5d5cfd7de4b063487e94a215", "category": "WORLD NEWS", "headline": "India Detains Thousands In Locked-Down Kashmir", "short_description": "Those arrested include anti-India protesters as well as pro-India Kashmiri leaders who have been held in jails and other makeshift facilities.", "authors": "Aijaz Hussain, AP", "date": "2019-08-21"},
-    {"link": "https://www.huffpost.com/entry/fire-kills-patients-southern-india-covid-19-facility_n_5f2feb77c5b6e96a22b3dc49", "category": "WORLD NEWS", "headline": "Fire Kills 11 Patients In Southern India COVID-19 Facility", "short_description": "This the second fire incident at a COVID-19 facility in India this month.", "authors": "Omer Farooq, AP", "date": "2020-08-09"}
-]
+{
+    "documents":[
+        {"link": "https://www.example.com/article1", "category": "TECHNOLOGY", "headline": "New Technology Breakthrough", "short_description": "A new technology has been developed that promises to revolutionize the industry.", "authors": "John Doe", "date": "2021-01-15"},
+        {"link": "https://www.example.com/article2", "category": "SPORTS", "headline": "Team Wins Championship", "short_description": "The team emerged victorious in the championship match, securing their place in history.", "authors": "Jane Smith", "date": "2021-02-28"},
+        {"link": "https://www.example.com/article3", "category": "ENTERTAINMENT", "headline": "New Movie Release", "short_description": "A highly anticipated movie has been released, captivating audiences worldwide.", "authors": "Michael Johnson", "date": "2021-03-10"},
+        {"link": "https://www.example.com/article4", "category": "BUSINESS", "headline": "Company Announces Record Profits", "short_description": "The company reported record-breaking profits for the fiscal year, exceeding expectations.", "authors": "Emily Davis", "date": "2021-04-05"},
+        {"link": "https://www.example.com/article5", "category": "HEALTH", "headline": "New Treatment for Disease", "short_description": "A breakthrough treatment has been discovered for a previously incurable disease.", "authors": "David Wilson", "date": "2021-05-20"},
+        {"link": "https://www.example.com/article6", "category": "POLITICS", "headline": "Election Results Announced", "short_description": "The election results have been announced, determining the new political landscape.", "authors": "Sarah Thompson", "date": "2021-06-12"},
+        {"link": "https://www.example.com/article7", "category": "SCIENCE", "headline": "Scientific Discovery", "short_description": "Scientists have made a groundbreaking discovery that could change the course of science.", "authors": "Robert Johnson", "date": "2021-07-08"},
+        {"link": "https://www.example.com/article8", "category": "ENVIRONMENT", "headline": "Environmental Conservation Efforts", "short_description": "Efforts to conserve the environment have reached new heights, with significant progress being made.", "authors": "Jennifer Davis", "date": "2021-08-25"},
+        {"link": "https://www.example.com/article9", "category": "EDUCATION", "headline": "Education Reform Initiative", "short_description": "A new initiative has been launched to reform the education system, aiming to improve student outcomes.", "authors": "Michael Smith", "date": "2021-09-17"},
+        {"link": "https://www.example.com/article10", "category": "TRAVEL", "headline": "Travel Destination Spotlight", "short_description": "A popular travel destination has been highlighted as a must-visit location for tourists.", "authors": "Jessica Brown", "date": "2021-10-30"}
+    ]
+}

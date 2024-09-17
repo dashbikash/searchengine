@@ -33,7 +33,7 @@ class BaseSearcher(abc.ABC):
         self.database = xapian.Database(config.INDEX_DIR)
 
     @abc.abstractmethod
-    def search(self, query, offset, limit)->list:
+    def search(self, query_string, offset, limit)->list:
         pass
 
     def finish(self):

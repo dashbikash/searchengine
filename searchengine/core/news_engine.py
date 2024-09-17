@@ -21,17 +21,18 @@ class NewsIndexer(BaseIndexer):
         if self._document_exists(unique_id):
             return False
 
-        indexer = xapian.TermGenerator()
-        stemmer = xapian.Stem("english")
-        indexer.set_stemmer(stemmer)
+        term_generator = xapian.TermGenerator()
+        term_generator.set_stemmer(xapian.Stem("english"))
+        term_generator.set_stemming_strategy(xapian.TermGenerator.STEM_SOME_FULL_POS)
         xapian_doc = xapian.Document()
         xapian_doc.set_data(news_pb_marshal(document))
-        indexer.set_document(xapian_doc)
+        term_generator.set_document(xapian_doc)
         
-        indexer.index_text(document["category"],1,"C")
+        term_generator.index_text(document["category"],1,"C")
+        term_generator.index_text(document["headline"],2,"H")
 
-        content_text="\n".join([document["headline"],document["short_description"],document["authors"]])
-        indexer.index_text(content_text,2,"Z")
+        content_text="\n".join([document["short_description"],document["authors"]])
+        term_generator.index_text(content_text,1,"Z")
 
         for token in self._tokenize(content_text):
             self.database.add_spelling(token)
@@ -60,7 +61,7 @@ class NewsSearcher(BaseSearcher):
         super().__init__()
         pass
 
-    def search(self, query="", offset=0, limit=10):
+    def search(self, query_string="", offset=0, limit=10):
         result={}
         try:
             self.database.reopen()
@@ -70,56 +71,56 @@ class NewsSearcher(BaseSearcher):
             query_parser.set_database(self.database)
 
             query_parser.set_stemmer(xapian.Stem("english"))
-            query_parser.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
+            query_parser.set_stemming_strategy(xapian.QueryParser.STEM_SOME_FULL_POS)
 
             query_parser.add_prefix("category", "C")
+            query_parser.add_prefix("headline", "H")
 
             # Set the query parser flags to enable OR operator
             query_parser.set_default_op(xapian.Query.OP_OR)
             
-            flags= xapian.QueryParser.FLAG_DEFAULT | xapian.QueryParser.FLAG_SPELLING_CORRECTION
-            query_parsed = query_parser.parse_query(query, flags)
+            flags = (
+                xapian.QueryParser.FLAG_DEFAULT |
+                xapian.QueryParser.FLAG_SPELLING_CORRECTION|
+                xapian.QueryParser.FLAG_PHRASE
+            )
+            query_parsed = query_parser.parse_query(query_string, flags)
             
             LOG.info("Parsed query: %s" % str(query_parsed))
             LOG.info("Corrected query: %s" % str(query_parser.get_corrected_query_string()))
             
             # Start an enquire session.
             enquire = xapian.Enquire(self.database)
-            # enquire.set_weighting_scheme(xapian.BM25Weight)
+            enquire.set_weighting_scheme(xapian.TfIdfWeight())
             enquire.set_query(query_parsed)
             matches = enquire.get_mset(offset, limit)
 
             # Display the results.
             LOG.info("Estimated records %i " % matches.get_matches_estimated())
-            LOG.info("Results 1-%i:" % matches.size())
 
             if matches.size()>0:
                 result["data"]=[ news_pb_unmarshal(m.document.get_data()) for m in matches]
                 result["estimated"]=matches.get_matches_estimated()
                 result["offset"]=offset
                 result["limit"]=limit
+        except Exception as e:
+            LOG.error("Error searching: %s" % str(e))
         finally:
             return result
 
 
 
 def news_pb_marshal(news):
-    pb_news = pb.DummyNews(link=news['link'],category=news['category'],headline=news['headline'],short_description=news['short_description'],authors=news['authors'],date=datetime.strptime(news['date'], '%Y-%m-%d'))
-    # if 'link' in news.keys() : pb_news.link=news['link']
-    # if 'category' in news.keys() : pb_news.category = news['category']
-    # if 'headline' in news.keys() : pb_news.headline = news['headline']
-    # if 'short_description' in news.keys() : pb_news.short_description = news['short_description']
-    # if 'authors' in news.keys() : pb_news.authors=news['authors']
-    # pb_news.date = datetime.strptime(news['date'], '%Y-%m-%d')
     
-    return pb_news.SerializeToString()
+    return pb.DummyNews(link=news['link'],category=news['category'],headline=news['headline'],short_description=news['short_description'],authors=news['authors'],date=datetime.strptime(news['date'], '%Y-%m-%d')).SerializeToString()
     # return json.dumps(news).encode('utf-8')
     
 
 def news_pb_unmarshal(news_serialized):
     pb_news = pb.DummyNews()
     pb_news.ParseFromString(news_serialized)
-    news = {
+
+    return {
         "link": pb_news.link,
         "category": pb_news.category,
         "headline": pb_news.headline,
@@ -127,4 +128,3 @@ def news_pb_unmarshal(news_serialized):
         "authors": pb_news.authors,
         "date": pb_news.date.ToDatetime().strftime('%Y-%m-%d')
     }
-    return news
