@@ -1,13 +1,15 @@
 import abc
 import xapian
 
-import config 
+import common 
+
+CONFIG = common.getConfig()
 
 class BaseIndexer(abc.ABC):
     database:xapian.WritableDatabase=None
 
     def __init__(self):
-        self.database = xapian.WritableDatabase(config.INDEX_DIR, xapian.DB_CREATE_OR_OPEN)
+        self.database = xapian.WritableDatabase(CONFIG["DEFAULT"]["index.dir"], xapian.DB_CREATE_OR_OPEN)
 
     @abc.abstractmethod
     def index(self, document)->bool:
@@ -30,7 +32,7 @@ class BaseIndexer(abc.ABC):
 class BaseSearcher(abc.ABC):
     database:xapian.Database=None
     def __init__(self):
-        self.database = xapian.Database(config.INDEX_DIR)
+        self.database = xapian.Database(CONFIG["DEFAULT"]["index.dir"])
 
     @abc.abstractmethod
     def search(self, query_string, offset, limit)->list:

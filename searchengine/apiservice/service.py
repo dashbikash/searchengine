@@ -2,11 +2,13 @@ from fastapi import FastAPI,APIRouter
 import uvicorn
 
 from core.news_engine import NewsIndexer,NewsSearcher
+import common
 
 app = FastAPI()
 
 api_router=APIRouter(prefix= "/api")
 
+CONFIG=common.getConfig()
 
 @api_router.post("/index")
 async def index_one(data: dict):
@@ -38,4 +40,4 @@ async def root():
 app.include_router(api_router)
     
 def serve():
-    uvicorn.run(app, port=8619)
+    uvicorn.run(app, port=int('8619' if CONFIG["DEFAULT"]["server.port"] is None else CONFIG["DEFAULT"]["server.port"]))

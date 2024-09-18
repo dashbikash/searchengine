@@ -1,4 +1,3 @@
-
 [
     {"link": "https://www.example.com/article1", "category": "TECHNOLOGY", "headline": "New Technology Breakthrough", "short_description": "A new technology has been developed that promises to revolutionize the industry.", "authors": "John Doe", "date": "2021-01-15"},
     {"link": "https://www.example.com/article2", "category": "SPORTS", "headline": "Team Wins Championship", "short_description": "The team emerged victorious in the championship match, securing their place in history.", "authors": "Jane Smith", "date": "2021-02-28"},

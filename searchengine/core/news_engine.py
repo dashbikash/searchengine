@@ -1,4 +1,3 @@
-import json
 import xapian
 import xxhash
 from core.base import BaseIndexer,BaseSearcher
@@ -16,25 +15,24 @@ class NewsIndexer(BaseIndexer):
         self._tokenizer=pyonmttok.Tokenizer("conservative", joiner_annotate=True)
 
     def index(self, document)->bool:
-        unique_id = xxhash.xxh3_64_hexdigest(document["link"])
+        unique_id = xxhash.xxh3_128_hexdigest(document["link"])
 
         if self._document_exists(unique_id):
             return False
 
         term_generator = xapian.TermGenerator()
         term_generator.set_stemmer(xapian.Stem("english"))
-        term_generator.set_stemming_strategy(xapian.TermGenerator.STEM_SOME_FULL_POS)
+        term_generator.set_stemming_strategy(xapian.TermGenerator.STEM_SOME)
         xapian_doc = xapian.Document()
         xapian_doc.set_data(news_pb_marshal(document))
         term_generator.set_document(xapian_doc)
         
         term_generator.index_text(document["category"],1,"C")
-        term_generator.index_text(document["headline"],2,"H")
+        term_generator.index_text(document["headline"])
+        term_generator.index_text(document["short_description"])
+        term_generator.index_text(document["authors"])
 
-        content_text="\n".join([document["short_description"],document["authors"]])
-        term_generator.index_text(content_text,1,"Z")
-
-        for token in self._tokenize(content_text):
+        for token in self._tokenize("".join([document["headline"],document["short_description"]])):
             self.database.add_spelling(token)
 
         xapian_doc.add_term(unique_id)  # Add the unique identifier as a term
@@ -71,10 +69,9 @@ class NewsSearcher(BaseSearcher):
             query_parser.set_database(self.database)
 
             query_parser.set_stemmer(xapian.Stem("english"))
-            query_parser.set_stemming_strategy(xapian.QueryParser.STEM_SOME_FULL_POS)
+            query_parser.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
 
             query_parser.add_prefix("category", "C")
-            query_parser.add_prefix("headline", "H")
 
             # Set the query parser flags to enable OR operator
             query_parser.set_default_op(xapian.Query.OP_OR)

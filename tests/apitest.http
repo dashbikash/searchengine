@@ -15,3 +15,6 @@ Content-Type: application/json
         {"link": "https://www.example.com/article10", "category": "TRAVEL", "headline": "Travel Destination Spotlight", "short_description": "A popular travel destination has been highlighted as a must-visit location for tourists.", "authors": "Jessica Brown", "date": "2021-10-30"}
     ]
 }
+
+### Search
+GET http://localhost:8619/api/search?q=technology

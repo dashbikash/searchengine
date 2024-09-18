@@ -1,6 +1,7 @@
+import configparser
 import logging
 
-def getLogger(name="",write_to_file=False):
+def getLogger(name="",write_to_file=False)->logging.Logger:
     # Create a logger
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
@@ -13,7 +14,7 @@ def getLogger(name="",write_to_file=False):
     console_handler.setFormatter(formatter)
     if write_to_file:
         # Create a file handler to write logs to a file
-        file_handler = logging.FileHandler('app.log')
+        file_handler = logging.FileHandler(getConfig()["DEFAULT"]["log.dir"]+'/app.log')
         file_handler.setFormatter(formatter)
         # Add the handlers to the logger
         logger.addHandler(file_handler)
@@ -21,3 +22,8 @@ def getLogger(name="",write_to_file=False):
     logger.addHandler(console_handler)
 
     return logger
+
+def getConfig()->configparser.ConfigParser:
+    config = configparser.ConfigParser()
+    config.read('config/application.ini')
+    return config

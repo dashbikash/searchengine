@@ -1,4 +1,4 @@
-from apiserver.server import serve
+from apiservice.service import serve
 
 
 serve()
