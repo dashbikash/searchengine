@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message DummyNews {
+    string link = 1;
+    string headline = 2;
+    string category = 3;
+    string short_description = 4;
+    string authors = 5;
+    google.protobuf.Timestamp date = 6;
+}
