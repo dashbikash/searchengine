@@ -40,4 +40,4 @@ async def root():
 app.include_router(api_router)
     
 def serve():
-    uvicorn.run(app, port=int('8619' if CONFIG["DEFAULT"]["server.port"] is None else CONFIG["DEFAULT"]["server.port"]))
+    uvicorn.run(app,host='0.0.0.0', port=int('8619' if CONFIG["DEFAULT"]["server.port"] is None else CONFIG["DEFAULT"]["server.port"]))
