@@ -77,6 +77,8 @@ def search_news():
 
 if len(sys.argv) > 1:
     if sys.argv[1] == 'i':
+        index_news()
+    if sys.argv[1] == 'i2':
         index_newsV2()
     if sys.argv[1] == 's':
         search_news() 
