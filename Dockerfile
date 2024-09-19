@@ -2,7 +2,9 @@ FROM ubuntu:22.04
 
 WORKDIR /app
 
-COPY searchengine/ ./searchengine 
+COPY searchengine/ ./searchengine
+COPY config/ ./config 
+
 COPY requirements.txt ./
 RUN apt update -y && \
     apt upgrade -y && \
