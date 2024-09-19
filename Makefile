@@ -12,7 +12,7 @@ run: ## Run the app locally
 	python searchengine/main.py
 
 run-docker: ## Run the docker image
-	docker run --rm --name $(CONTAINER_NAME) -v /tmp:/tmp  -p 8000:8000 $(IMAGE_NAME)
+	docker run --rm --name $(CONTAINER_NAME) -v /tmp:/tmp -v ./config:./config -p 8000:8000 $(IMAGE_NAME)
 	
 run-dummyindex: ## Index dummy data
 	docker run --rm -it -v /tmp:/tmp $(IMAGE_NAME) python3 searchengine/script.py i
