@@ -3,7 +3,7 @@ CONTAINER_NAME=searchengine
 
 
 build-image: ## Build the docker image
-	docker build -t $(IMAGE_NAME) . ;
+	docker build -f Dockerfile.alpine -t $(IMAGE_NAME) . ;
 
 pb-codegen: ## Generate the protobuf code
 	protoc --proto_path=./protos --python_out=./searchengine/pb protos/documents.proto ;

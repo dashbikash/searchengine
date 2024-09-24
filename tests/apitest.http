@@ -17,4 +17,4 @@ Content-Type: application/json
 }
 
 ### Search
-GET http://localhost:8619/api/search?q=technology
+GET http://localhost:8619/api/search?q=sport

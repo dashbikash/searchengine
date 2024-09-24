@@ -3,4 +3,4 @@ xxhash
 #langdetect
 protobuf
 tiktoken
-pyonmttok
+xapian-bindings-binary
