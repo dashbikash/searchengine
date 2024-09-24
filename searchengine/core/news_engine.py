@@ -1,7 +1,7 @@
 import xapian
 import xxhash
 from core.base import BaseIndexer,BaseSearcher
-import pyonmttok
+import tiktoken
 from datetime import datetime
 import common
 import pb.documents_pb2 as pb
@@ -12,7 +12,7 @@ class NewsIndexer(BaseIndexer):
     
     def __init__(self):
         super().__init__()
-        self._tokenizer=pyonmttok.Tokenizer("conservative", joiner_annotate=True)
+        self._tokenizer=tiktoken.get_encoding("cl100k_base")
 
     def index(self, document)->bool:
         unique_id = xxhash.xxh3_128_hexdigest(document["link"])
@@ -32,7 +32,7 @@ class NewsIndexer(BaseIndexer):
         term_generator.index_text(document["short_description"])
         term_generator.index_text(document["authors"])
 
-        for token in self._tokenize("".join([document["headline"],document["short_description"]])):
+        for token in self._tokenize("\n".join([document["headline"],document["short_description"]])):
             self.database.add_spelling(token)
 
         xapian_doc.add_term(unique_id)  # Add the unique identifier as a term
@@ -51,7 +51,8 @@ class NewsIndexer(BaseIndexer):
         
     
     def _tokenize(self, text:str)->list:
-        return self._tokenizer.tokenize(text)[0]
+        
+        return [self._tokenizer.decode_single_token_bytes(t) for t in  self._tokenizer.encode(text)]
 
 
 class NewsSearcher(BaseSearcher):
